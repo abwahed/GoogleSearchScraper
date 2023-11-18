@@ -1,0 +1,30 @@
+<%= form_with(model: user, url: signup_path, local: true, method: :post) do |form| %>
+  <% if user.errors.any? %>
+    <div class="alert alert-danger col-md-6 offset-md-3 text-start" role="alert">
+      <ul>
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-floating mb-3 col-md-6 offset-md-3">
+    <%= form.email_field :email, autofocus: true, class: 'form-control', placeholder: 'name@email.com', name: 'signup[email]', required: true %>
+    <%= form.label :email, class: 'form-label' %>
+  </div>
+
+  <div class="form-floating mb-3 col-md-6 offset-md-3">
+    <%= form.password_field :password, class: 'form-control', placeholder: 'Password', name: 'signup[password]', required: true %>
+    <%= form.label :password, class: 'form-label' %>
+  </div>
+
+  <div class="form-floating mb-3 col-md-6 offset-md-3">
+    <%= form.password_field :password_confirmation, class: 'form-control', placeholder: 'Confirm Password', name: 'signup[password_confirmation]', required: true %>
+    <%= form.label :password_confirmation, class: 'form-label' %>
+  </div>
+
+  <div class="actions col-md-6 offset-md-3">
+    <%= form.submit 'Sign Up', class: 'btn btn-outline-success w-100' %>
+  </div>
+<% end %>

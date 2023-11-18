@@ -1,0 +1,20 @@
+<div class="container">
+  <div class="page-header my-3">
+    <h1><%= @keyword.name %></h1>
+  </div>
+  <div class="p-5 rounded-4 border border-2 border-light">
+    <div class="panel-body">
+      <p>AdWords Advertisers: <%= @search_result.adwords_count %></p>
+    </div>
+    <div class="panel-body">
+      <p>Total Links: <%= @search_result.links_count %></p>
+    </div>
+    <div class="panel-body">
+      <p>Total Search Results: <%= @search_result.total_results %></p>
+    </div>
+  </div>
+</div>
+<div class="container my-3">
+  <h5>HTML Code:</h5>
+  <%= @search_result.html_code %>
+</div>

@@ -1,0 +1,19 @@
+<% content_for :title do %>
+  <title>Uploaded Keywords</title>
+<% end %>
+
+<div class="container-fluid">
+  <div class="container my-5">
+    <div class="text-center col-md-8 offset-md-2">
+      <h1 class="text-body-emphasis">Your Uploaded Keywords</h1>
+      <div class="row m-auto">
+        <div class="col-md-10 offset-md-1 col-sm-12">
+          <ul class="list-unstyled list-group text-start">
+            <%= turbo_stream_from @current_user, :data_set %>
+            <%= render @keywords %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

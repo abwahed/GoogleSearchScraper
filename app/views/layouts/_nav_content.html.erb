@@ -1,0 +1,27 @@
+<div class="container-flouid">
+  <nav class="navbar navbar-expand-lg bg-light">
+    <div class="container">
+      <a class="navbar-brand" href="/">
+        <h3>SCRAPPER</h3>
+      </a>
+      <div class="collapse navbar-collapse justify-content-end">
+        <% if @current_user.nil? %>
+          <div class="">
+            <%= link_to "Login", log_in_path, class: "btn btn-outline-primary mr-2" %>
+            <%= link_to "Signup", sign_up_path, class: "btn btn-outline-success" %>
+          </div>
+        <% else %>
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Keywords</a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="<%= new_keyword_path %>">Upload New</a></li>
+                <li><a class="dropdown-item" href="<%= keywords_path %>">View All</a></li>
+              </ul>
+            </li>
+          </ul>
+        <% end %>
+      </div>
+    </div>
+  </nav>
+</div>

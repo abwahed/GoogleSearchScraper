@@ -1,0 +1,16 @@
+<% content_for :title do %>
+  <title>Sign Up</title>
+<% end %>
+
+<div class="container-fluid">
+  <div class="container my-5">
+    <div class="p-5 text-center bg-body-tertiary rounded-3">
+      <h1 class="text-body-emphasis">Signup</h1>
+      <div class="row w-100 m-auto">
+        <%= turbo_frame_tag 'new_user' do %>
+          <%= render 'form', user: @user %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

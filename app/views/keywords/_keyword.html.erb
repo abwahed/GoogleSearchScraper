@@ -1,0 +1,15 @@
+<div id="data-container-<%= keyword.id %>">
+  <% if defined?(search_result) || keyword.search_result.present? %>
+    <li class="list-group-item">
+      <%= keyword.name %> - <%= link_to 'View Result', search_result_keyword_path(keyword.id), target: '_blank' %>
+    </li>
+  <% elsif defined?(exception) %>
+    <li class="list-group-item">
+      <%= keyword.name %> - (An Error Occurred)
+    </li>
+  <% else %>
+    <li class="list-group-item">
+      <%= keyword.name %> - (Please Wait, Searching...)
+    </li>
+  <% end %>
+</div>
