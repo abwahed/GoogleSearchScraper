@@ -7,7 +7,7 @@ class KeywordsController < ApplicationController
   def new; end
 
   def create
-    if keyword_params[:file].present?
+    if keyword_params[:file].present? && keyword_params[:file].content_type == 'text/csv'
       csv_data = keyword_params[:file].read
       keywords_array = CSV.parse(csv_data, headers: false).flatten
 

@@ -7,33 +7,8 @@
     <div class="p-5 text-center bg-body-tertiary rounded-3">
       <h1 class="text-body-emphasis">Login</h1>
       <div class="row w-100 m-auto">
-        <%= form_with(url: login_path, local: true, method: :post) do |form| %>
-          <%# if @user.errors.any? %>
-          <!--    <div id="error_explanation">-->
-          <!--      <h2><%#= pluralize(@user.errors.count, 'error') %> prohibited this user from being saved:</h2>-->
-
-          <!--      <ul>-->
-          <%# @user.errors.full_messages.each do |message| %>
-          <!--          <li><%#= message %></li>-->
-          <%# end %>
-          <%# end %>
-          <!--      </ul>-->
-          <!--    </div>-->
-          <%# end %>
-
-          <div class="form-floating mb-3 col-md-6 offset-md-3">
-            <%= form.email_field :email, autofocus: true, class: 'form-control', placeholder: 'name@email.com' %>
-            <%= form.label :email %>
-          </div>
-
-          <div class="form-floating mb-3 col-md-6 offset-md-3">
-            <%= form.password_field :password, class: 'form-control', placeholder: 'Password' %>
-            <%= form.label :password %>
-          </div>
-
-          <div class="actions col-md-6 offset-md-3">
-            <%= form.submit 'Login', class: 'btn btn-outline-primary w-100' %>
-          </div>
+        <%= turbo_frame_tag 'new_session' do %>
+          <%= render 'form'%>
         <% end %>
       </div>
     </div>
