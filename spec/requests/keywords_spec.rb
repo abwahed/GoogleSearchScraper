@@ -37,8 +37,8 @@ RSpec.describe 'Keywords', type: :request do
           post keywords_path,
                params: { keywords: { file: fixture_file_upload('invalid_keywords.txt', 'text/plain') } }
         end.not_to change(Keyword, :count)
-        expect(response).to redirect_to(new_keyword_path)
-        expect(flash[:alert]).to be_present
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('Please upload a valid CSV file')
       end
     end
 
@@ -48,8 +48,27 @@ RSpec.describe 'Keywords', type: :request do
           post keywords_path,
                params: { keywords: { file: nil } }
         end.not_to change(Keyword, :count)
-        expect(response).to redirect_to(new_keyword_path)
-        expect(flash[:alert]).to be_present
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include('Please upload a valid CSV file')
+      end
+    end
+
+    context 'with more than the allowed maximum keywords' do
+      it 'does not create keywords and renders new with an alert' do
+        csv_content = "keyword1\n" * (KeywordsController::MAX_KEYWORDS_ALLOWED + 1)
+
+        file_path = Rails.root.join('spec/fixtures/files', 'too_many_keywords.csv')
+
+        File.open(file_path, 'w') do |file|
+          file.write(csv_content)
+        end
+
+        expect do
+          post keywords_path,
+               params: { keywords: { file: fixture_file_upload('too_many_keywords.csv', 'text/csv') } }
+        end.not_to change(Keyword, :count)
+        expect(response).to have_http_status(:success)
+        expect(response.body).to include("You can upload a maximum of #{KeywordsController::MAX_KEYWORDS_ALLOWED} keywords.")
       end
     end
   end
