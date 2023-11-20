@@ -1,0 +1,17 @@
+<%= form_with url: keywords_path, local: true, id: 'keyword_form' do |form| %>
+  <% if defined?(error) %>
+    <div class="alert alert-danger col-md-6 offset-md-3 text-start" role="alert">
+      <ul>
+        <li><%= error %></li>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group mb-3 col-md-6 offset-md-3">
+    <%= form.file_field :file, name: 'keywords[file]', accept: 'text/csv', class: 'form-control' %>
+  </div>
+
+  <div class="actions col-md-6 offset-md-3">
+    <%= form.submit 'Upload', class: 'btn btn-outline-success w-100' %>
+  </div>
+<% end %>

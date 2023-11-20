@@ -4,6 +4,8 @@ require 'csv'
 
 class KeywordsController < ApplicationController
   before_action :set_keyword, only: %i[search_result]
+
+  MAX_KEYWORDS_ALLOWED = 100
   def new; end
 
   def create
@@ -11,13 +13,24 @@ class KeywordsController < ApplicationController
       csv_data = keyword_params[:file].read
       keywords_array = CSV.parse(csv_data, headers: false).flatten
 
+      if keywords_array.size > MAX_KEYWORDS_ALLOWED
+        render turbo_stream: turbo_stream.replace(
+          'keyword_form',
+          partial: 'keywords/form', locals: { error: "You can upload a maximum of #{MAX_KEYWORDS_ALLOWED} keywords." }
+        )
+        return
+      end
+
       keywords_array.each do |keyword|
         @current_user.keywords.create(name: keyword)
       end
 
       redirect_to keywords_path, notice: 'Keywords were successfully created.'
     else
-      redirect_to new_keyword_path, alert: 'Please upload a valid CSV file.'
+      render turbo_stream: turbo_stream.replace(
+        'keyword_form',
+        partial: 'keywords/form', locals: { error: 'Please upload a valid CSV file' }
+      )
     end
   end
 
