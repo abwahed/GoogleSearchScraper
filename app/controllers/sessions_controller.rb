@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 class SessionsController < ApplicationController
   skip_before_action :authenticate_user!
 
-  def new
-  end
+  def new; end
 
   def create
     user = User.find_by(email: login_params[:email])
@@ -14,7 +15,10 @@ class SessionsController < ApplicationController
       return
     end
 
-    render turbo_stream: turbo_stream.replace('new_session', partial: 'sessions/form', locals: { error: 'Email and Password does not match' })
+    render turbo_stream: turbo_stream.replace(
+      'login_form',
+      partial: 'sessions/form', locals: { error: 'Email and Password does not match' }
+    )
   end
 
   private

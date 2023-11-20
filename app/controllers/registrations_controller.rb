@@ -15,7 +15,7 @@ class RegistrationsController < ApplicationController
       return
     end
 
-    render turbo_stream: turbo_stream.replace('new_user', partial: 'registrations/form', locals: { user: })
+    render turbo_stream: turbo_stream.replace('signup_form', partial: 'registrations/form', locals: { user: })
   end
 
   private
