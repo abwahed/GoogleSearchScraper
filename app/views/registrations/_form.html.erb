@@ -1,4 +1,4 @@
-<%= form_with(model: user, url: signup_path, local: true, method: :post) do |form| %>
+<%= form_with(model: user, url: signup_path, local: true, method: :post, id: 'signup_form') do |form| %>
   <% if user.errors.any? %>
     <div class="alert alert-danger col-md-6 offset-md-3 text-start" role="alert">
       <ul>
