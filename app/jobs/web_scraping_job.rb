@@ -5,6 +5,7 @@ class WebScrapingJob < ApplicationJob
   queue_as :default
 
   def perform(keyword)
+    notify_searching(keyword)
     url = "https://www.google.com/search?q=#{CGI.escape(keyword.name)}"
 
     options = Selenium::WebDriver::Chrome::Options.new
@@ -20,10 +21,11 @@ class WebScrapingJob < ApplicationJob
       wait.until { driver.find_element(css: 'div#result-stats') }
 
       html = driver.page_source
-      search_result = parse_search_results(keyword, html)
-      notify_completed(keyword, search_result)
+      parse_search_results(keyword, html)
+      notify_completed(keyword)
     rescue StandardError => e
-      notify_failed(keyword, e)
+      notify_failed(keyword)
+      retry_job(wait: 30.seconds)
     ensure
       driver.quit
     end
@@ -44,21 +46,39 @@ class WebScrapingJob < ApplicationJob
     search_result
   end
 
-  def notify_completed(keyword, search_result)
+  def notify_searching(keyword)
     Turbo::StreamsChannel.broadcast_replace_to(
       [keyword.user, :data_set],
       target: "data-container-#{keyword.id}",
       partial: 'keywords/keyword',
-      locals: { keyword:, search_result: }
+      locals: { keyword:, status: 'searching' }
     )
   end
 
-  def notify_failed(keyword, exception)
+  def notify_completed(keyword)
     Turbo::StreamsChannel.broadcast_replace_to(
       [keyword.user, :data_set],
       target: "data-container-#{keyword.id}",
       partial: 'keywords/keyword',
-      locals: { keyword:, exception: }
+      locals: { keyword:, status: 'complete' }
+    )
+  end
+
+  def notify_failed(keyword)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      [keyword.user, :data_set],
+      target: "data-container-#{keyword.id}",
+      partial: 'keywords/keyword',
+      locals: { keyword:, status: 'failed' }
+    )
+  end
+
+  def notify_retrying(keyword)
+    Turbo::StreamsChannel.broadcast_replace_to(
+      [keyword.user, :data_set],
+      target: "data-container-#{keyword.id}",
+      partial: 'keywords/keyword',
+      locals: { keyword:, status: 'retrying' }
     )
   end
 end
