@@ -3,7 +3,6 @@
 class KeywordsController < ApplicationController
   before_action :set_keyword, only: %i[search_result]
 
-  MAX_KEYWORDS_ALLOWED = 100
   def new; end
 
   def create
