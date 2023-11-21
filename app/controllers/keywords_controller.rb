@@ -36,7 +36,7 @@ class KeywordsController < ApplicationController
 
   def index
     # pagination was not mentioned in the requirement, so keeping the last 100 records
-    @keywords = @current_user.keywords.order(id: :desc).limit(100).includes(:search_result)
+    @keywords = @current_user.keywords.order(id: :desc).limit(100)
   end
 
   def search_result

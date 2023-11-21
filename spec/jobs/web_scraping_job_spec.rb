@@ -18,26 +18,32 @@ RSpec.describe WebScrapingJob, type: :job do
     WebScrapingJob.perform_later(keyword)
   end
 
-  it 'parses search results and notifies completed' do
+  it 'updates search status, completes the job' do
     keyword = create(:keyword)
-    allow_any_instance_of(WebScrapingJob).to receive(:notify_completed)
-    allow_any_instance_of(WebScrapingJob).to receive(:notify_failed)
 
-    html = '<html><body><div class="ad_cclk">Ad1</div><a href="#">Link1</a><div id="result-stats">Results: 10</div></body></html>'
-    allow_any_instance_of(Selenium::WebDriver::Driver).to receive(:page_source).and_return(html)
+    allow(GoogleSearchManager::GoogleSearchFetcher).to receive(:call).and_return('html_content')
+    allow(GoogleSearchManager::GoogleSearchScraper).to receive(:call)
+    allow(KeywordManager::SearchStatusUpdater).to receive(:call)
 
-    expect_any_instance_of(SearchResult).to receive(:save)
-    WebScrapingJob.perform_now(keyword)
+    expect(KeywordManager::SearchStatusUpdater).to receive(:call).with(keyword, 'searching').ordered
+    expect(KeywordManager::SearchStatusUpdater).to receive(:call).with(keyword, 'complete').ordered
+
+    expect(GoogleSearchManager::GoogleSearchFetcher).to receive(:call).with(keyword)
+    expect(GoogleSearchManager::GoogleSearchScraper).to receive(:call).with(keyword, 'html_content')
+
+    described_class.perform_now(keyword)
   end
 
-  it 'notifies failed on exception' do
+  it 'handles errors, retries the job' do
     keyword = create(:keyword)
-    allow_any_instance_of(WebScrapingJob).to receive(:notify_completed)
-    allow_any_instance_of(WebScrapingJob).to receive(:notify_failed).and_call_original
 
-    allow_any_instance_of(Selenium::WebDriver::Driver).to receive(:page_source).and_raise(StandardError.new('Test error'))
+    allow(KeywordManager::SearchStatusUpdater).to receive(:call)
 
-    expect_any_instance_of(SearchResult).not_to receive(:save)
-    WebScrapingJob.perform_now(keyword)
+    expect(GoogleSearchManager::GoogleSearchFetcher).to receive(:call).with(keyword).and_raise(StandardError)
+
+    expect(KeywordManager::SearchStatusUpdater).to receive(:call).with(keyword, 'failed').ordered
+    expect(KeywordManager::SearchStatusUpdater).to receive(:call).with(keyword, 'retrying').ordered
+
+    described_class.perform_now(keyword)
   end
 end

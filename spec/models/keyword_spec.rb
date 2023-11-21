@@ -27,6 +27,11 @@ RSpec.describe Keyword, type: :model do
       keyword = build(:keyword, name: nil)
       expect(keyword).to_not be_valid
     end
+
+    it 'is not valid without a search status' do
+      keyword = build(:keyword, search_status: nil)
+      expect(keyword).to_not be_valid
+    end
   end
 
   describe 'callbacks' do

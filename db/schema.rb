@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2023_11_14_202843) do
+ActiveRecord::Schema[7.1].define(version: 2023_11_21_092757) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,6 +19,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_11_14_202843) do
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "search_status", default: 0, null: false
     t.index ["name"], name: "index_keywords_on_name"
     t.index ["user_id"], name: "index_keywords_on_user_id"
   end
