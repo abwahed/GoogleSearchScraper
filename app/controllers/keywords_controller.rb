@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'csv'
-
 class KeywordsController < ApplicationController
   before_action :set_keyword, only: %i[search_result]
 
@@ -10,22 +8,19 @@ class KeywordsController < ApplicationController
 
   def create
     if keyword_params[:file].present? && keyword_params[:file].content_type == 'text/csv'
-      csv_data = keyword_params[:file].read
-      keywords_array = CSV.parse(csv_data, headers: false).flatten
-
-      if keywords_array.size > MAX_KEYWORDS_ALLOWED
-        render turbo_stream: turbo_stream.replace(
-          'keyword_form',
-          partial: 'keywords/form', locals: { error: "You can upload a maximum of #{MAX_KEYWORDS_ALLOWED} keywords." }
-        )
+      csv_processor = CsvManager::CsvProcessor.new(keyword_params[:file])
+      if csv_processor.valid?
+        csv_processor.keywords_array.each do |keyword|
+          @current_user.keywords.create(name: keyword)
+        end
+        redirect_to keywords_path, notice: 'Keywords were successfully created.'
         return
       end
 
-      keywords_array.each do |keyword|
-        @current_user.keywords.create(name: keyword)
-      end
-
-      redirect_to keywords_path, notice: 'Keywords were successfully created.'
+      render turbo_stream: turbo_stream.replace(
+        'keyword_form',
+        partial: 'keywords/form', locals: { error: csv_processor.errors.full_messages.join(', ') }
+      )
     else
       render turbo_stream: turbo_stream.replace(
         'keyword_form',
