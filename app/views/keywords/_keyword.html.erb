@@ -1,17 +1,17 @@
 <div id="data-container-<%= keyword.id %>">
-  <% if (defined?(status) && status.eql?('complete')) || keyword.search_result.present? %>
+  <% if keyword.complete? %>
     <li class="list-group-item">
       <%= keyword.name %> - <%= link_to 'View Result', search_result_keyword_path(keyword.id), target: '_blank' %>
     </li>
-  <% elsif defined?(status) && status.eql?('failed') %>
+  <% elsif keyword.failed? %>
     <li class="list-group-item">
       <%= keyword.name %> - (An Error Occurred, Will retry soon..)
     </li>
-  <% elsif defined?(status) && status.eql?('searching') %>
+  <% elsif keyword.searching? %>
     <li class="list-group-item">
       <%= keyword.name %> - (Please Wait, Searching...)
     </li>
-  <% elsif defined?(status) && status.eql?('retrying') %>
+  <% elsif keyword.retrying? %>
     <li class="list-group-item">
       <%= keyword.name %> - (Retrying...)
     </li>

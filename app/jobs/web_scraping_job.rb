@@ -25,7 +25,7 @@ class WebScrapingJob < ApplicationJob
       notify_completed(keyword)
     rescue StandardError => e
       notify_failed(keyword)
-      retry_job(wait: 30.seconds)
+      retry_job(wait: 20.seconds)
     ensure
       driver.quit
     end
@@ -47,38 +47,42 @@ class WebScrapingJob < ApplicationJob
   end
 
   def notify_searching(keyword)
+    keyword.update(search_status: 'searching')
     Turbo::StreamsChannel.broadcast_replace_to(
       [keyword.user, :data_set],
       target: "data-container-#{keyword.id}",
       partial: 'keywords/keyword',
-      locals: { keyword:, status: 'searching' }
+      locals: { keyword: }
     )
   end
 
   def notify_completed(keyword)
+    keyword.update(search_status: 'complete')
     Turbo::StreamsChannel.broadcast_replace_to(
       [keyword.user, :data_set],
       target: "data-container-#{keyword.id}",
       partial: 'keywords/keyword',
-      locals: { keyword:, status: 'complete' }
+      locals: { keyword: }
     )
   end
 
   def notify_failed(keyword)
+    keyword.update(search_status: 'failed')
     Turbo::StreamsChannel.broadcast_replace_to(
       [keyword.user, :data_set],
       target: "data-container-#{keyword.id}",
       partial: 'keywords/keyword',
-      locals: { keyword:, status: 'failed' }
+      locals: { keyword: }
     )
   end
 
   def notify_retrying(keyword)
+    keyword.update(search_status: 'retrying')
     Turbo::StreamsChannel.broadcast_replace_to(
       [keyword.user, :data_set],
       target: "data-container-#{keyword.id}",
       partial: 'keywords/keyword',
-      locals: { keyword:, status: 'retrying' }
+      locals: { keyword: }
     )
   end
 end
