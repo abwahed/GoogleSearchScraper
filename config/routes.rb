@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     get :search_result, on: :member, as: :search_result
   end
 
+  resources :search_results, only: %i[show]
+
   get 'sign_up' => 'registrations#new'
   post 'sign_up', to: 'registrations#create', as: :signup
   get 'log_in' => 'sessions#new'
