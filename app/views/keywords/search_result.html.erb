@@ -16,9 +16,9 @@
     <div class="panel-body">
       <p>Total Search Results: <%= @search_result.total_results %></p>
     </div>
+    <div class="panel-body">
+      <p>HTML Code: <%= link_to "Show Scraped Content", search_result_path(@search_result), target: '_blank' %>
+      </p>
+    </div>
   </div>
-</div>
-<div class="container my-3">
-  <h5>HTML Code:</h5>
-  <%= @search_result.html_code %>
 </div>
